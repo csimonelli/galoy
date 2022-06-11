@@ -1,3 +1,5 @@
+export * from "./support-role"
+
 import { checkedToUsername } from "@domain/accounts"
 import { checkedToPhoneNumber } from "@domain/users"
 import { AccountsRepository, UsersRepository } from "@services/mongoose"
