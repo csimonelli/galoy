@@ -59,30 +59,16 @@ export const requestPhoneCode = async ({
   const phoneNumberValid = checkedToPhoneNumber(phone)
   if (phoneNumberValid instanceof Error) return phoneNumberValid
 
-  {
-    const limitOk = await checkPhoneCodeAttemptPerIpLimits(ip)
-    if (limitOk instanceof Error) return limitOk
-  }
 
-  {
-    const limitOk = await checkPhoneCodeAttemptPerPhoneLimits(phoneNumberValid)
-    if (limitOk instanceof Error) return limitOk
-  }
 
-  {
-    const limitOk = await checkPhoneCodeAttemptPerPhoneMinIntervalLimits(phoneNumberValid)
-    if (limitOk instanceof Error) return limitOk
-  }
 
-  const testAccounts = getTestAccounts()
-  if (TestAccountsChecker(testAccounts).isPhoneValid(phoneNumberValid)) {
-    return true
-  }
 
   const code = String(randomInt(100000, 999999)) as PhoneCode
   const galoyInstanceName = getGaloyInstanceName()
   const body = `${code} is your verification code for ${galoyInstanceName}`
-
+  
+  console.log(body)
+  
   const result = await PhoneCodesRepository().persistNew({
     phone: phoneNumberValid,
     code,
@@ -91,7 +77,7 @@ export const requestPhoneCode = async ({
 
   const sendTextArguments = { body, to: phoneNumberValid, logger }
 
-  return TwilioClient().sendText(sendTextArguments)
+  return true
 }
 
 const checkPhoneCodeAttemptPerIpLimits = async (
